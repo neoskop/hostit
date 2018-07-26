@@ -24,7 +24,7 @@ export function configure<T>(schema : convict.Schema<T>) {
             format: 'String',
             arg: 'config',
             env: 'CONFIG',
-            default: null
+            default: ''
         },
         ...(schema as any)
     } as convict.Schema<T>), {
@@ -51,20 +51,12 @@ export function configure<T>(schema : convict.Schema<T>) {
                 maxDocLength = 0;
             
             const schema = config.getSchema();
-            const keys : keyof T[] = Object.keys(schema.properties) as any;
-            const data : [ string, string, string ][] = [];
             
-            for(const key of keys) {
-                const arg : string|undefined = (schema.properties[key as keyof T] as any).arg;
-                const doc : string = (schema.properties[key as keyof T] as any).doc;
-                const format : string = (schema.properties[key as keyof T] as any).format;
-                if(!arg) {
-                    continue;
-                }
+            const data = parseProps(schema.properties);
+            
+            for(const [ arg, doc ] of data) {
                 maxArgLength = Math.max(maxArgLength, arg.length);
                 maxDocLength = Math.max(maxDocLength, doc.length);
-                
-                data.push([ arg, doc, format ]);
             }
             
             console.log('  ', 'Options:'.cyan);
@@ -105,4 +97,23 @@ export function configure<T>(schema : convict.Schema<T>) {
     }
     
     return config;
+}
+
+function parseProps(props : any, data : [ string, string, string ][] = []) : [ string, string, string ][] {
+    const keys = Object.keys(props);
+    for(const key of keys) {
+        const arg : string|undefined = props[key].arg;
+        const doc : string = props[key].doc;
+        const format : string = props[key].format;
+        if(props[key].properties) {
+            parseProps(props[key].properties, data);
+        }
+        if(!arg) {
+            continue;
+        }
+        
+        data.push([ arg, doc, format ]);
+    }
+    
+    return data;
 }
