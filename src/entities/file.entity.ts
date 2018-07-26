@@ -19,6 +19,6 @@ export class FileEntity {
     @Column()
     size! : number;
     
-    @Column(process.env.SQLITE ? 'blob' : 'longblob')
+    @Column(/* istanbul ignore next */ process.env.SQLITE ? 'blob' : 'longblob')
     content! : Buffer;
 }

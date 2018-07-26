@@ -89,7 +89,7 @@ describe('file', () => {
         beforeEach(async () => {
             const res = await request(app)
                 .post('/')
-                .set('Content-Type', 'application/json')
+                .set('Content-Type', 'text/json')
                 .send(JSON.stringify({ foo: 'bar' }));
             
             id = res.text;
@@ -100,8 +100,8 @@ describe('file', () => {
                 .get(`/${id}`);
     
             expect(res).to.have.status(200);
-            expect(res).to.have.header('Content-Type', 'application/json; charset=utf-8');
-            expect(res.body).to.be.eql({ foo: 'bar' });
+            expect(res).to.have.header('Content-Type', 'text/json; charset=utf-8');
+            expect(JSON.parse(res.text)).to.be.eql({ foo: 'bar' });
         });
         
         it('should thrown on unknwon id', async () => {
@@ -117,7 +117,7 @@ describe('file', () => {
         beforeEach(async () => {
             const res = await request(app)
                 .post('/')
-                .set('Content-Type', 'application/json')
+                .set('Content-Type', 'text/json')
                 .send(JSON.stringify({ foo: 'bar' }));
             
             id = res.text;
@@ -126,7 +126,7 @@ describe('file', () => {
         it('should update file', async () => {
             const res = await request(app)
                 .put(`/${id}`)
-                .set('Content-Type', 'application/json')
+                .set('Content-Type', 'text/json')
                 .send(JSON.stringify({ foobar: 'baz' }));
     
             expect(res).to.have.status(200);
@@ -134,7 +134,7 @@ describe('file', () => {
             const res2 = await request(app)
                 .get(`/${id}`);
     
-            expect(res2.body).to.be.eql({ foobar: 'baz' });
+            expect(JSON.parse(res2.text)).to.be.eql({ foobar: 'baz' });
             expect(res2).to.have.header('Content-Length', '16');
         });
         
@@ -162,7 +162,7 @@ describe('file', () => {
         beforeEach(async () => {
             const res = await request(app)
                 .post('/')
-                .set('Content-Type', 'application/json')
+                .set('Content-Type', 'text/json')
                 .send(JSON.stringify({ foo: 'bar' }));
             
             id = res.text;

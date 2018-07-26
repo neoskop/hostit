@@ -16,6 +16,7 @@ import { FileController } from './controller/file.controller';
 import { ValidateUpload } from './middlewares/validate-upload.middleware';
 import { UPLOAD_ACCPTED_TYPES, UPLOAD_LIMIT, UPLOAD_VERIFY, VerifyFn } from './tokens';
 import { defaultErrorHandler } from '@neoskop/nem/lib/errors/error-handler';
+import { TagController } from './controller/tag.controller';
 const debug = require('debug')('hostit');
 
 export interface HostitConfiguration {
@@ -84,7 +85,8 @@ export interface HostitConfiguration {
         }
     ],
     controller : [
-        [ '/', FileController ]
+        [ '/', FileController ],
+        [ '/', TagController ]
     ]
     
 })

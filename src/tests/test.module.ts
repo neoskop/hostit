@@ -11,7 +11,7 @@ import { TypeormModule } from '@neoskop/nem-typeorm';
         }),
         HostitModule.forConfiguration({
             limit: '1kb',
-            acceptedTypes: [ 'application/json', 'image/jpeg', 'application/pdf', 'text/plain' ],
+            acceptedTypes: [ 'text/json', 'image/jpeg', 'application/pdf', 'text/plain' ],
             verifier: [(_req : any, _res : any, body : Buffer) => {
                 if('invalid' === body.toString()) {
                     throw new BadRequestError();
