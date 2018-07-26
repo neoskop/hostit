@@ -5,7 +5,7 @@ import {
     Delete,
     Get,
     Header,
-    OnNull,
+    OnUndefined,
     Param,
     Post,
     Put,
@@ -58,7 +58,7 @@ export class FileController {
     }
     
     @Get('/:id')
-    @OnNull(404)
+    @OnUndefined(404)
     @Raw()
     async read(@Param('id') id : string) {
         const repo = await this.connection.getRepository(FileEntity);
@@ -68,7 +68,7 @@ export class FileController {
         const file = await repo.findOne(id);
         
         if(!file) {
-            return null;
+            return;
         }
         
         return Result([
@@ -78,7 +78,7 @@ export class FileController {
     }
     
     @Put('/:id')
-    @OnNull(404)
+    @OnUndefined(404)
     @ContentType('text/plain')
     @Text()
     async update(@Req() req : Request,
@@ -93,7 +93,7 @@ export class FileController {
         const file = await repo.findOne(id);
         
         if(!file) {
-            return null;
+            return;
         }
         
         if(file.type !== type) {
@@ -111,7 +111,7 @@ export class FileController {
     }
     
     @Delete('/:id')
-    @OnNull(404)
+    @OnUndefined(404)
     @ContentType('text/plain')
     @Text()
     async delete(@Param('id') id : string) {
@@ -122,7 +122,7 @@ export class FileController {
         const file = await repo.findOne(id);
         
         if(!file) {
-            return null;
+            return;
         }
         
         await repo.remove(file);

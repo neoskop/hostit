@@ -1,5 +1,5 @@
 import {
-    APP,
+    APP, BadRequestError,
     BOOTSTRAP_LISTENER_BEFORE,
     ERROR_HANDLER,
     HttpError,
@@ -17,6 +17,8 @@ import { ValidateUpload } from './middlewares/validate-upload.middleware';
 import { UPLOAD_ACCPTED_TYPES, UPLOAD_LIMIT, UPLOAD_VERIFY, VerifyFn } from './tokens';
 import { defaultErrorHandler } from '@neoskop/nem/lib/errors/error-handler';
 import { TagController } from './controller/tag.controller';
+import { InfoController } from './controller/info.controller';
+
 const debug = require('debug')('hostit');
 
 export interface HostitConfiguration {
@@ -41,7 +43,7 @@ export interface HostitConfiguration {
         TypeormModule
     ],
     middlewares: [
-        bodyParser.json()
+        bodyParser.json({ strict: true })
     ],
     providers  : [
         {
@@ -78,6 +80,8 @@ export interface HostitConfiguration {
             useValue: (error : any, request : Request, response : Response, next : NextFunction) => {
                 if(error.type === 'entity.too.large') {
                     error = new HttpError(413, error.message);
+                } else if(error.type === 'entity.parse.failed') {
+                    error = new BadRequestError(error.message);
                 }
                 debug(request.method, request.path, error);
                 defaultErrorHandler(error, request, response, next);
@@ -86,7 +90,8 @@ export interface HostitConfiguration {
     ],
     controller : [
         [ '/', FileController ],
-        [ '/', TagController ]
+        [ '/', TagController ],
+        [ '/', InfoController ]
     ]
     
 })

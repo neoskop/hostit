@@ -180,7 +180,7 @@ describe('file', () => {
             expect(res2).to.have.status(404);
         });
         
-        it('should thrown on unknwon id', async () => {
+        it('should thrown on unknown id', async () => {
             const res = await request(app)
                 .del(`/00000000-0000-0000-0000-000000000000`);
 

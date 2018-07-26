@@ -27,7 +27,7 @@ describe('tags', () => {
         (getConnectionManager() as any).connections.length = 0;
     });
     
-    describe('GET /:id', () => {
+    describe('GET /:id/tags', () => {
         it('should return tags', async () => {
             const res = await request(app)
                 .get(`/${id}/tags`);
@@ -63,16 +63,16 @@ describe('tags', () => {
         it('should throw on invalid json', async () => {
             const res = await request(app)
                 .put(`/${id}/tags`)
-                .set('Content-Type', 'application/javascript')
+                .set('Content-Type', 'application/json')
                 .send(JSON.stringify({}));
 
             expect(res).to.have.status(400);
         });
         
-        it('should thrown on unknwon id', async () => {
+        it('should thrown on unknown id', async () => {
             const res = await request(app)
                 .put(`/00000000-0000-0000-0000-000000000000/tags`)
-                .set('Content-Type', 'application/javascript')
+                .set('Content-Type', 'application/json')
                 .send(JSON.stringify([ 'foobar', 'baz' ]));
 
             expect(res).to.have.status(404);
