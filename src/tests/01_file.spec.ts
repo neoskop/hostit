@@ -82,6 +82,15 @@ describe('file', () => {
             
             expect(res).to.have.status(413);
         });
+        
+        it('should refuse suspect files', async () => {
+            const res = await request(app)
+                .post('/')
+                .set('Content-Type', 'text/plain')
+                .send('X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*');
+    
+            expect(res).to.have.status(406);
+        });
     });
     
     describe('GET /:id', () => {
@@ -155,6 +164,15 @@ describe('file', () => {
 
             expect(res).to.have.status(404);
         });
+    
+        it('should refuse suspect files', async () => {
+            const res = await request(app)
+                .post(`/${id}`)
+                .set('Content-Type', 'text/json')
+                .send('X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*');
+        
+            expect(res).to.have.status(406);
+        });
     });
     
     describe('DELETE /:id', () => {
@@ -187,13 +205,4 @@ describe('file', () => {
             expect(res).to.have.status(404);
         });
     });
-    
-    it('should throw on verifier exception', async () => {
-        const res = await request(app)
-            .post('/')
-            .set('Content-Type', 'text/plain')
-            .send('invalid');
-    
-        expect(res).to.have.status(400);
-    })
 });

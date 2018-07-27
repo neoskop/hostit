@@ -1,6 +1,7 @@
-import { BadRequestError, NemModule } from '@neoskop/nem';
+import { NemModule } from '@neoskop/nem';
 import { HostitModule } from '../hostit.module';
 import { TypeormModule } from '@neoskop/nem-typeorm';
+import { ClamAVModule } from '../verifier';
 
 @NemModule({
     modules: [
@@ -11,13 +12,9 @@ import { TypeormModule } from '@neoskop/nem-typeorm';
         }),
         HostitModule.forConfiguration({
             limit: '1kb',
-            acceptedTypes: [ 'text/json', 'image/jpeg', 'application/pdf', 'text/plain' ],
-            verifier: [(_req : any, _res : any, body : Buffer) => {
-                if('invalid' === body.toString()) {
-                    throw new BadRequestError();
-                }
-            }]
-        })
+            acceptedTypes: [ 'text/json', 'image/jpeg', 'application/pdf', 'text/plain' ]
+        }),
+        ClamAVModule
     ]
 })
 export class TestModule {

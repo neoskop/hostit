@@ -8,13 +8,13 @@ import {
 } from '@neoskop/nem';
 import bodyParser from 'body-parser';
 import { Application, NextFunction, Request, Response } from 'express'
-import { Optional } from '@angular/core';
+import { Optional, Type } from '@angular/core';
 import { provideEntity, TypeormModule } from '@neoskop/nem-typeorm';
 import { FileEntity } from './entities/file.entity';
 import { FileTagEntity } from './entities/file-tag.entity';
 import { FileController } from './controller/file.controller';
 import { ValidateUpload } from './middlewares/validate-upload.middleware';
-import { UPLOAD_ACCPTED_TYPES, UPLOAD_LIMIT, UPLOAD_VERIFY, VerifyFn } from './tokens';
+import { UPLOAD_ACCPTED_TYPES, UPLOAD_LIMIT, UPLOAD_VERIFY, IVerifier } from './tokens';
 import { defaultErrorHandler } from '@neoskop/nem/lib/errors/error-handler';
 import { TagController } from './controller/tag.controller';
 import { InfoController } from './controller/info.controller';
@@ -35,7 +35,7 @@ export interface HostitConfiguration {
     /**
      * Functions to verify the file upload
      */
-    verifier? : VerifyFn[];
+    verifier? : Type<IVerifier>[];
 }
 
 @NemModule({
@@ -48,7 +48,7 @@ export interface HostitConfiguration {
     providers  : [
         {
             provide: BOOTSTRAP_LISTENER_BEFORE,
-            useFactory(app : Application, limit : number | string, type : string[], verifier? : VerifyFn[]) {
+            useFactory(app : Application, limit : number | string, type : string[], verifier? : IVerifier[]) {
                 return () => {
                     app.use(bodyParser.raw({
                         limit,
@@ -59,7 +59,7 @@ export interface HostitConfiguration {
                         app.use(async (req : Request, res : Response, next : NextFunction) => {
                             try {
                                 for(const v of verifier) {
-                                    await v(req, res, req.body);
+                                    await v.verify(req, res, req.body);
                                 }
                                 next();
                             } catch(e) {

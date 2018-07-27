@@ -64,6 +64,9 @@
     "src/cli.ts",
     "src/index.ts"
   ],
+  "include": [
+    "src/verifier/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ],
