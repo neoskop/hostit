@@ -11,7 +11,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "test": "SQLITE=true nyc -e '.ts' -r html -r text mocha --opts mocha.opts"
+    "test": "SQLITE=true nyc -e '.ts' -r html -r text mocha --opts mocha.opts",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",

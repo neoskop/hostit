@@ -1,0 +1,19 @@
+version: "3.4"
+services:
+  hostit:
+    depends_on:
+      - db
+    build:
+      context: .
+    ports:
+      - "5717:5717"
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hostit
+volumes:
+  dbdata:

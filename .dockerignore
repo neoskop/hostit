@@ -1,0 +1,9 @@
+node_modules
+.*
+docker-compose.yml
+Dockerfile
+flow-bump.yml
+lib
+.idea
+.nyc_output
+coverage
