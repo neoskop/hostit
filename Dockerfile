@@ -8,7 +8,7 @@ ENV NODE_ENV    production
 ENV DB_TYPE     mysql
 ENV DB_HOST     db
 ENV DB_PORT     3306
-ENV DB_NAME     hostit
+ENV DB_DATABASE hostit
 ENV DB_USER     root
 ENV DB_PASS     root
 ENV PORT        5717

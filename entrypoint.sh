@@ -7,7 +7,7 @@ db:
     type: ${DB_TYPE}
     host: ${DB_HOST}
     port: ${DB_PORT}
-    database: ${DB_NAME}
+    database: ${DB_DATABASE}
     username: ${DB_USER}
     password: ${DB_PASS}
 EOL
