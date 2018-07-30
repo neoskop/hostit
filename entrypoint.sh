@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+freshclam -d &
+clamd &
+
 tee conf.yml << EOL
 httpd:
     port: ${PORT}
