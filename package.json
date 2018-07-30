@@ -1,6 +1,6 @@
 {
   "name": "@neoskop/hostit",
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0-rc.6",
   "description": "Simple File Hosting Server",
   "main": "lib/index.js",
   "bin": {
