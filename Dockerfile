@@ -16,7 +16,7 @@ ENV SECRET      "NOT_SO_SECURE_SECRET...CHANGE!!!"
 
 RUN npm install -g yarn
 
-VOLUME ["/var/lib/clamav"]
+RUN mkdir -p /var/lib/clamav
 
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
@@ -25,9 +25,6 @@ RUN mkdir /var/run/clamav && \
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
     echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf
-
-RUN cat /etc/clamav/clamd.conf
-RUN cat /etc/clamav/freshclam.conf
 
 
 WORKDIR /src
