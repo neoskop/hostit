@@ -102,7 +102,7 @@ export class HostitModule {
             providers: [
                 { provide: UPLOAD_LIMIT, useValue: limit },
                 { provide: UPLOAD_ACCPTED_TYPES, useValue: acceptedTypes },
-                ...(verifier ? [ { provide: UPLOAD_VERIFY, useValue: verifier } ] : [])
+                ...(verifier ? verifier.map(v => ({ provide: UPLOAD_VERIFY, useClass: v, multi: true })) : [])
             ]
         }
     }
