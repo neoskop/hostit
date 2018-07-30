@@ -12,6 +12,7 @@ ENV DB_DATABASE hostit
 ENV DB_USER     root
 ENV DB_PASS     root
 ENV PORT        5717
+ENV SECRET      "NOT_SO_SECURE_SECRET...CHANGE!!!"
 
 RUN npm install -g yarn
 

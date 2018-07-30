@@ -10,6 +10,7 @@ db:
     database: ${DB_DATABASE}
     username: ${DB_USER}
     password: ${DB_PASS}
+secret: "${SECRET}"
 EOL
 
 echo "Waiting for MySQL($DB_HOST)..."
