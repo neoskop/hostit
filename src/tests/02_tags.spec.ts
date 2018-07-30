@@ -3,20 +3,24 @@ import { expect, request, use } from 'chai';
 import { nem } from '@neoskop/nem';
 import { TestModule } from './test.module';
 import { getConnection, getConnectionManager } from 'typeorm';
+import { TokenManager } from '../token-manager';
 
 use(require('chai-http'));
 
 describe('tags', () => {
     let app : express.Application;
     let id : string;
+    let manager : TokenManager;
     
     beforeEach(async () => {
         app = express();
         await nem().bootstrap(TestModule, { app });
+        manager = new TokenManager('123456');
     
         const res = await request(app)
             .post('/?tags=foo,bar')
             .set('Content-Type', 'text/plain')
+            .set('Authorization', `Bearer ${manager.create()}`)
             .send(new Buffer('abcdefg'));
         
         id = res.text;
@@ -50,6 +54,7 @@ describe('tags', () => {
             const res = await request(app)
                 .put(`/${id}/tags`)
                 .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${manager.create({ put: id })}`)
                 .send(JSON.stringify([ 'foobar', 'baz' ]));
     
             expect(res).to.have.status(200);
@@ -64,6 +69,7 @@ describe('tags', () => {
             const res = await request(app)
                 .put(`/${id}/tags`)
                 .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${manager.create({ put: id })}`)
                 .send(JSON.stringify({}));
 
             expect(res).to.have.status(400);
@@ -73,9 +79,40 @@ describe('tags', () => {
             const res = await request(app)
                 .put(`/00000000-0000-0000-0000-000000000000/tags`)
                 .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${manager.create({ put: '00000000-0000-0000-0000-000000000000' })}`)
                 .send(JSON.stringify([ 'foobar', 'baz' ]));
 
             expect(res).to.have.status(404);
+        });
+    
+        it('should refuse on invalid token', async () => {
+            const res = await request(app)
+                .put(`/${id}/tags`)
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer abcdefdg`)
+                .send(JSON.stringify([ 'foobar' ]));
+        
+            expect(res).to.have.status(403);
+        });
+    
+        it('should refuse on missing rights in token', async () => {
+            const res = await request(app)
+                .put(`/${id}/tags`)
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${manager.create()}`)
+                .send(JSON.stringify([ 'foobar' ]));
+        
+            expect(res).to.have.status(403);
+        });
+    
+        it('should update file with adm token', async () => {
+            const res = await request(app)
+                .put(`/${id}/tags`)
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${manager.create({ adm: true })}`)
+                .send(JSON.stringify([ 'foobar' ]));
+        
+            expect(res).to.have.status(200);
         });
     });
 });

@@ -1,7 +1,7 @@
 import { NemModule } from '@neoskop/nem';
 import { HostitModule } from '../hostit.module';
 import { TypeormModule } from '@neoskop/nem-typeorm';
-import { ClamAVModule } from '../verifier';
+import { ClamAVModule, TokenModule } from '../verifier';
 
 @NemModule({
     modules: [
@@ -14,7 +14,8 @@ import { ClamAVModule } from '../verifier';
             limit: '1kb',
             acceptedTypes: [ 'text/json', 'image/jpeg', 'application/pdf', 'text/plain' ]
         }),
-        ClamAVModule
+        ClamAVModule,
+        TokenModule.withSecret('123456')
     ]
 })
 export class TestModule {

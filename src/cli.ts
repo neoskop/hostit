@@ -3,9 +3,8 @@ import { nem, NemModule } from '@neoskop/nem';
 import { TypeormModule } from '@neoskop/nem-typeorm';
 import { HostitModule } from './hostit.module';
 import { __importDefault } from 'tslib';
-import { IVerifier } from './tokens';
+import { CONFIG, IVerifier } from './tokens';
 import { Type } from '@angular/core';
-import { CLAMAV_SCAN_COMMAND } from './verifier';
 
 const debug = require('debug')('hostit:cli');
 
@@ -62,8 +61,15 @@ const config = configure({
     verifier: {
         doc: 'Verifier',
         format: 'Array',
-        default: [ './verifier#ClamAVModule' ],
+        default: [ './verifier#ClamAVModule', './verifier#TokenModule' ],
         arg: 'verifier'
+    },
+    secret: {
+        doc: 'Secret Token',
+        format: '*',
+        default: undefined as undefined|string,
+        arg: 'token',
+        env: 'TOKEN'
     }
 });
 
@@ -75,6 +81,9 @@ const config = configure({
         }),
         HostitModule.forConfiguration(),
         ...config.get('verifier').map(loadVerifier)
+    ],
+    providers: [
+        { provide: CONFIG, useValue: config.get() }
     ]
 })
 class CoreModule {
