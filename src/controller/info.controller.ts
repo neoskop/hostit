@@ -1,6 +1,8 @@
 import { Body, Get, JsonController, OnUndefined, Param, Put } from '@neoskop/nem';
 import { ConnectionProxy } from '@neoskop/nem-typeorm/lib';
 import { FileEntity } from '../entities/file.entity';
+import { IToken } from '../token-manager';
+import { Token } from '../verifier';
 
 const debug = require('debug')('hostit:controller:info');
 
@@ -30,7 +32,8 @@ export class InfoController {
     @Put('/:id/info')
     @OnUndefined(404)
     async update(@Param('id') id : string,
-                 @Body() info : any) {
+                 @Body() info : any,
+                 @Token() token?: IToken) {
         const repo = await this.connection.getRepository(FileEntity);
         
         debug('update', id, info);
@@ -42,6 +45,9 @@ export class InfoController {
         }
         
         file.info = info;
+        file.editor = token && token.iss;
+        file.updates!++;
+        file.updated = new Date().toISOString();
         
         await repo.save(file);
         

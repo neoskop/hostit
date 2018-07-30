@@ -2,6 +2,8 @@ import { BadRequestError, Body, Get, JsonController, OnUndefined, Param, Put } f
 import { ConnectionProxy } from '@neoskop/nem-typeorm/lib';
 import { FileEntity } from '../entities/file.entity';
 import { FileTagEntity } from '../entities/file-tag.entity';
+import { IToken } from '../token-manager';
+import { Token } from '../verifier';
 
 const debug = require('debug')('hostit:controller:tag');
 
@@ -31,7 +33,8 @@ export class TagController {
     @Put('/:id/tags')
     @OnUndefined(404)
     async update(@Param('id') id : string,
-                 @Body() tags : string[]) {
+                 @Body() tags : string[],
+                 @Token() token?: IToken) {
         const repo = await this.connection.getRepository(FileEntity);
         const tagRepo = await this.connection.getRepository(FileTagEntity);
         
@@ -46,6 +49,12 @@ export class TagController {
         if(!Array.isArray(tags) || !tags.every(tag => typeof tag === 'string')) {
             throw new BadRequestError();
         }
+    
+        file.editor = token && token.iss;
+        file.updates!++;
+        file.updated = new Date().toISOString();
+        
+        await repo.save(file);
         
         await tagRepo.delete({ file });
         for(const tag of tags) {

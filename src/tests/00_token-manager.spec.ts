@@ -17,7 +17,7 @@ describe('TokenManager', () => {
         const token = manager.create();
     
         const decoded = manager.verify(token);
-        expect(decoded).to.be.an('object').with.keys('iat', 'exp', 'aud');
+        expect(decoded).to.be.an('object').with.keys('iat', 'exp', 'aud', 'iss');
     });
     
     it('should refuse token with invalid secret', () => {

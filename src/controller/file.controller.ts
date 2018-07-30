@@ -21,6 +21,8 @@ import { ConnectionProxy } from '@neoskop/nem-typeorm/lib';
 import { Request } from 'express';
 import { FileEntity } from '../entities/file.entity';
 import { ValidateUpload } from '../middlewares/validate-upload.middleware';
+import { Token } from '../verifier';
+import { IToken } from '../token-manager';
 
 const debug = require('debug')('hostit:controller:file');
 
@@ -37,6 +39,7 @@ export class FileController {
     @Text()
     async create(@Req() req : Request,
                  @Body() content : Buffer,
+                 @Token() token?: IToken,
                  @QueryParam('tags', { parse: (val?: string) => val && val.split(/\s*,\s*/) }) tags? : string[]) {
         const type = req.header('content-type')!;
         const size = content.length;
@@ -49,7 +52,8 @@ export class FileController {
             type,
             size,
             content,
-            tags: tags && tags.map(tag => ({ tag }))
+            tags: tags && tags.map(tag => ({ tag })),
+            creator: token && token.iss
         });
     
         debug('created', res.id);
@@ -71,6 +75,10 @@ export class FileController {
             return;
         }
         
+        file.views!++;
+        
+        await repo.save(file);
+        
         return Result([
             new ContentType(file.type),
             new Header('Content-Length', file.size.toString())
@@ -83,7 +91,8 @@ export class FileController {
     @Text()
     async update(@Req() req : Request,
                  @Param('id') id : string,
-                 @Body() content : Buffer,) {
+                 @Body() content : Buffer,
+                 @Token() token?: IToken) {
         const type = req.header('content-type')!;
         const size = content.length;
         const repo = await this.connection.getRepository(FileEntity);
@@ -102,6 +111,9 @@ export class FileController {
         
         file.content = content;
         file.size = size;
+        file.editor = token && token.iss;
+        file.updates!++;
+        file.updated = new Date().toISOString();
         
         await repo.save(file);
         

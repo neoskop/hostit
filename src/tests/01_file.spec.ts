@@ -9,6 +9,8 @@ import { TokenManager } from '../token-manager';
 
 use(require('chai-http'));
 
+export const ISO_DATE = /(\d{4}-[01]\d-[0-3]\d(?:T| )[0-2]\d:[0-5]\d:[0-5]\d\.?\d*)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
+
 describe('file', () => {
     let app : express.Application;
     let module : NemBootstrappedModule;
@@ -313,4 +315,67 @@ describe('file', () => {
             expect(res).to.have.status(200);
         });
     });
+    
+    describe('meta/counter', () => {
+        let id : string;
+        
+        beforeEach(async () => {
+            const res = await request(app)
+                .post('/')
+                .set('Content-Type', 'text/plain')
+                .set('Authorization', `Bearer ${manager.create()}`)
+                .send(new Buffer('abcdefg'));
+    
+            id = res.text;
+        });
+        
+        it('should set meta/counter on create', async () => {
+            const repo = await module.injector.get(ConnectionProxy).getRepository(FileEntity);
+    
+            const file = await repo.findOne(id);
+            expect(file.creator).to.be.equal('urn:hostit');
+            expect(file.editor).to.be.null;
+            expect(file.created).to.match(ISO_DATE);
+            expect(file.updated).to.be.null;
+            expect(file.updates).to.be.equal(0);
+            expect(file.views).to.be.equal(0);
+        });
+        
+        it('should update editor meta/counter', async () => {
+            const res = await request(app)
+                .put(`/${id}`)
+                .set('Content-Type', 'text/plain')
+                .set('Authorization', `Bearer ${manager.create({ put: id }, { issuer: 'urn:hostit-test' })}`)
+                .send('foobar');
+            
+            expect(res).to.have.status(200);
+    
+            const repo = await module.injector.get(ConnectionProxy).getRepository(FileEntity);
+    
+            const file = await repo.findOne(id);
+            expect(file.creator).to.be.equal('urn:hostit');
+            expect(file.editor).to.be.equal('urn:hostit-test');
+            expect(file.created).to.match(ISO_DATE);
+            expect(file.updated).to.match(ISO_DATE);
+            expect(file.updates).to.be.equal(1);
+            expect(file.views).to.be.equal(0);
+        });
+        
+        it('should update views counter', async () => {
+            const res = await request(app)
+                .get(`/${id}`);
+            
+            expect(res).to.have.status(200);
+    
+            const repo = await module.injector.get(ConnectionProxy).getRepository(FileEntity);
+    
+            const file = await repo.findOne(id);
+            expect(file.creator).to.be.equal('urn:hostit');
+            expect(file.editor).to.be.null;
+            expect(file.created).to.match(ISO_DATE);
+            expect(file.updated).to.be.null;
+            expect(file.updates).to.be.equal(0);
+            expect(file.views).to.be.equal(1);
+        });
+    })
 });

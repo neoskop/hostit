@@ -1,12 +1,40 @@
 import { CONFIG, IConfiguration, IVerifier, UPLOAD_VERIFY } from '../tokens';
 import { Request, Response } from 'express';
-import { ForbiddenError, NemModule, NemModuleWithProviders, UnauthorizedError } from '@neoskop/nem';
+import {
+    AbstractParam,
+    Annotator,
+    ForbiddenError,
+    NemModule,
+    NemModuleWithProviders,
+    UnauthorizedError
+} from '@neoskop/nem';
 import { Injectable, InjectionToken, Optional } from '@angular/core';
 import { TokenManager } from '../token-manager';
+import { IToken } from '../token-manager';
 
 const debug = require('debug')('hostit:verifier:token');
 
 export const TOKEN_SECRET = new InjectionToken<string|undefined>('Token Secret');
+
+
+declare module 'express' {
+    export interface Request {
+        token? : IToken;
+    }
+}
+
+export interface TokenDecorator {
+    () : any;
+    new () : Token
+}
+
+export interface Token extends AbstractParam<Token> {
+
+}
+
+export const Token : TokenDecorator = Annotator.makeParamDecorator('Token', () => ({
+    resolve: (_options : Token, req : Request) => req.token
+}), AbstractParam);
 
 @Injectable()
 export class TokenVerifier implements IVerifier {
@@ -37,7 +65,7 @@ export class TokenVerifier implements IVerifier {
                 throw new UnauthorizedError();
             }
             
-            let data = this.tokenManager.verify(token);
+            const data = this.tokenManager.verify(token);
             
             debug('data', data);
             
@@ -45,6 +73,8 @@ export class TokenVerifier implements IVerifier {
                 debug('forbidden');
                 throw new ForbiddenError();
             }
+            
+            req.token = data;
             
             if('PUT' === req.method) {
                 if(data.adm) return;

@@ -21,4 +21,22 @@ export class FileEntity {
     
     @Column(/* istanbul ignore next */ process.env.SQLITE ? 'blob' : 'longblob')
     content! : Buffer;
+    
+    @Column('varchar', { nullable: true, length: 128 })
+    creator?: string;
+    
+    @Column('varchar', { nullable: true, length: 128 })
+    editor?: string;
+    
+    @Column({ type: /* istanbul ignore next */ process.env.SQLITE ? 'varchar' : 'timestamp', nullable: true, default: /* istanbul ignore next */ process.env.LEGACY_MYSQL ? '0000-00-00 00:00:00' : () => 'CURRENT_TIMESTAMP' })
+    created? : string|null;
+    
+    @Column({ type: /* istanbul ignore next */ process.env.SQLITE ? 'varchar' : 'timestamp', nullable: true })
+    updated? : string|null;
+    
+    @Column('int', { default: 0 })
+    updates?: number;
+    
+    @Column('int', { default: 0 })
+    views?: number;
 }
