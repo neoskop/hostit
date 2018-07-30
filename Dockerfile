@@ -2,7 +2,7 @@ FROM node:10 as dev
 MAINTAINER Mark Wecke <wecke@neoskop.de>
 
 RUN apt-get update
-RUN apt-get install -y mysql-client
+RUN apt-get install -y mysql-client clamav clamav-freshclam clamav-daemon
 
 ENV NODE_ENV    production
 ENV DB_TYPE     mysql
