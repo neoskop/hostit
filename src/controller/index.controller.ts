@@ -1,5 +1,7 @@
 import { Controller, Get, Text } from '@neoskop/nem';
 
+const PKG = require('../../package.json');
+
 @Controller()
 export class IndexController {
     @Get('/')
@@ -18,6 +20,7 @@ export class IndexController {
             main { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: lightblue }
             section { background: white; padding: 10px; border-radius: 3px; box-shadow: 5px 5px 5px rgba(0, 0, 0, .3); min-width: 300px; }
             h1 { font-size: 24px; display: block; border-bottom: 1px solid rgba(0, 0, 0, .3); }
+            small { display: block; text-align: right; color: rgba(0, 0, 0, .3); }
         </style>
     </head>
     
@@ -26,6 +29,7 @@ export class IndexController {
             <section>
                 <h1>HostIt</h1>
                 <p>Simple REST file hosting</p>
+                <small>version: ${PKG.version}</small>
             </section>
         </main>
     </body>
