@@ -19,6 +19,7 @@ import { defaultErrorHandler } from '@neoskop/nem/lib/errors/error-handler';
 import { TagController } from './controller/tag.controller';
 import { InfoController } from './controller/info.controller';
 import { MetaController } from './controller/meta.controller';
+import { IndexController } from './controller/index.controller';
 
 const debug = require('debug')('hostit');
 
@@ -93,7 +94,8 @@ export interface HostitConfiguration {
         [ '/', FileController ],
         [ '/', TagController ],
         [ '/', InfoController ],
-        [ '/', MetaController ]
+        [ '/', MetaController ],
+        [ '/', IndexController ]
     ]
     
 })
