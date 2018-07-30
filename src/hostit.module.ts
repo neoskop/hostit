@@ -18,6 +18,7 @@ import { UPLOAD_ACCPTED_TYPES, UPLOAD_LIMIT, UPLOAD_VERIFY, IVerifier } from './
 import { defaultErrorHandler } from '@neoskop/nem/lib/errors/error-handler';
 import { TagController } from './controller/tag.controller';
 import { InfoController } from './controller/info.controller';
+import { MetaController } from './controller/meta.controller';
 
 const debug = require('debug')('hostit');
 
@@ -91,7 +92,8 @@ export interface HostitConfiguration {
     controller : [
         [ '/', FileController ],
         [ '/', TagController ],
-        [ '/', InfoController ]
+        [ '/', InfoController ],
+        [ '/', MetaController ]
     ]
     
 })
