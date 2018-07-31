@@ -15,13 +15,13 @@ ENV SECRET      "NOT_SO_SECURE_SECRET...CHANGE!!!"
 
 RUN npm install -g yarn
 
-VOLUME [ "/var/lib/clamav" ]
-
 # Download initial database
 RUN wget -O /var/lib/clamav/main.cvd -q http://database.clamav.net/main.cvd && \
     wget -O /var/lib/clamav/daily.cvd -q http://database.clamav.net/daily.cvd && \
     wget -O /var/lib/clamav/bytecode.cvd -q http://database.clamav.net/bytecode.cvd && \
     chown clamav:clamav /var/lib/clamav/*.cvd
+
+VOLUME [ "/var/lib/clamav" ]
 
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
