@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 (cd /var/lib/clamav && tar -zkxvf /clamav.tgz -C .)
+chown clamav:clamav /var/lib/clamav
 
 
 freshclam
