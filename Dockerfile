@@ -21,7 +21,7 @@ RUN wget -O /var/lib/clamav/main.cvd -q http://database.clamav.net/main.cvd && \
     wget -O /var/lib/clamav/bytecode.cvd -q http://database.clamav.net/bytecode.cvd && \
     chown clamav:clamav /var/lib/clamav/*.cvd
 
-RUN cd /var/lib/clamav && tar -czvf /src/clamav.tgz .
+RUN cd /var/lib/clamav && tar -czvf /clamav.tgz .
 
 VOLUME [ "/var/lib/clamav" ]
 
