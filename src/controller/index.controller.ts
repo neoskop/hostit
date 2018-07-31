@@ -45,10 +45,9 @@ function init() {
             errorEl.innerText = e.message;
         });
         
-        xhr.addEventListener('load', e => {
+        xhr.addEventListener('load', () => {
             progressEl.style.display = 'none';
             descEl.style.display = 'none';
-            console.log(e);
             if(xhr.status === 200) {
                 resultEl.style.display = '';
                 resultEl.innerHTML = `<a href="${location.origin}/${xhr.responseText}" target="_blank">${location.origin}/${xhr.responseText}</a>`;
