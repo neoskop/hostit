@@ -31,11 +31,16 @@ export class ClamAVVerifier implements IVerifier {
         try {
             await execa(this.binary, [ '-', '--no-summary' ], { input: buffer });
         } catch(err) {
-            debug(err.stdout);
+            debug('stdout', err.stdout);
+            debug('stderr', err.stderr);
+            
             /* istanbul ignore else */
             if(err.stdout && err.stdout.match(/FOUND/)) {
                 throw new NotAcceptableError();
             }
+            
+            debug('err', err);
+            
             /* istanbul ignore next */
             throw err;
         } finally {
