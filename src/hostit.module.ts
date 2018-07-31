@@ -87,6 +87,7 @@ export interface HostitConfiguration {
                 }
                 debug(request.method, request.path, error);
                 defaultErrorHandler(error, request, response, next);
+                request.socket.destroy();
             }
         }
     ],
