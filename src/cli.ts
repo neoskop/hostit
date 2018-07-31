@@ -5,6 +5,7 @@ import { HostitModule } from './hostit.module';
 import { __importDefault } from 'tslib';
 import { CONFIG, IVerifier } from './tokens';
 import { Type } from '@angular/core';
+import { TokenManager } from './token-manager';
 
 const debug = require('debug')('hostit:cli');
 
@@ -88,6 +89,10 @@ const config = configure({
 })
 class CoreModule {
 
+}
+
+if(process.env.NODE_ENV !== 'production') {
+    console.log('Admin Token:', new TokenManager(config.get('secret')!).create({ adm: true }, { ttl: '365d' }));
 }
 
 debug('config', config.toString());

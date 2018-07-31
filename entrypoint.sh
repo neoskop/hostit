@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+freshclam
 freshclam -d &
 clamd &
+
 
 tee conf.yml << EOL
 httpd:

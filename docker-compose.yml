@@ -5,8 +5,14 @@ services:
       - db
     build:
       context: .
+      target: dev
     ports:
       - "5717:5717"
+    volumes:
+      - clamavdata:/var/lib/clamav
+    environment:
+      DEBUG: "hostit*"
+      SECRET: doov2ohshotiovuYeil1ophaiPhuus5woh8ohth3kaehatoe
   db:
     image: mysql:5.7
     restart: always
@@ -17,3 +23,4 @@ services:
       MYSQL_DATABASE: hostit
 volumes:
   dbdata:
+  clamavdata:

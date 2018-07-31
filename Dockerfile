@@ -2,9 +2,8 @@ FROM node:10 as dev
 MAINTAINER Mark Wecke <wecke@neoskop.de>
 
 RUN apt-get update
-RUN apt-get install -y mysql-client clamav clamav-freshclam clamav-daemon
+RUN apt-get install -y mysql-client clamav-freshclam clamav-daemon wget
 
-ENV NODE_ENV    production
 ENV DB_TYPE     mysql
 ENV DB_HOST     db
 ENV DB_PORT     3306
@@ -16,14 +15,19 @@ ENV SECRET      "NOT_SO_SECURE_SECRET...CHANGE!!!"
 
 RUN npm install -g yarn
 
-RUN mkdir -p /var/lib/clamav
+VOLUME [ "/var/lib/clamav" ]
+
+# Download initial database
+RUN wget -O /var/lib/clamav/main.cvd -q http://database.clamav.net/main.cvd && \
+    wget -O /var/lib/clamav/daily.cvd -q http://database.clamav.net/daily.cvd && \
+    wget -O /var/lib/clamav/bytecode.cvd -q http://database.clamav.net/bytecode.cvd && \
+    chown clamav:clamav /var/lib/clamav/*.cvd
 
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
     chmod 750 /var/run/clamav
 
 RUN sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/clamd.conf && \
-    echo "TCPSocket 3310" >> /etc/clamav/clamd.conf && \
     sed -i 's/^Foreground .*$/Foreground true/g' /etc/clamav/freshclam.conf
 
 
@@ -40,5 +44,6 @@ CMD [ "./bin/cli.js", "--config", "conf.yml" ]
 EXPOSE ${PORT}
 
 FROM dev as prod
+ENV NODE_ENV production
 RUN rm -rf node_modules
 RUN yarn --prod
