@@ -13,7 +13,7 @@ export class FileEntity {
     @OneToMany(() => FileTagEntity, tag => tag.file, { onDelete: 'CASCADE', cascade: true, eager: true })
     tags? : FileTagEntity[];
     
-    @Column('varchar', { length: 32 })
+    @Column('varchar', { length: 128 })
     type! : string;
     
     @Column()

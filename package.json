@@ -35,7 +35,8 @@
     "sqlite3": "^4.0.2",
     "ts-node": "^7.0.0",
     "tslib": "^1.9.3",
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "vue": "^2.5.16"
   },
   "dependencies": {
     "@angular/core": "^6.1.0",
