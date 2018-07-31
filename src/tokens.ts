@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { Request, Response } from 'express';
 
 export interface IVerifier {
+    readonly PREUPLOAD? : boolean;
     verify(req : Request, res : Response, buffer : Buffer): void|Promise<void>;
 }
 

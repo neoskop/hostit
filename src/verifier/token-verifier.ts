@@ -38,6 +38,8 @@ export const Token : TokenDecorator = Annotator.makeParamDecorator('Token', () =
 
 @Injectable()
 export class TokenVerifier implements IVerifier {
+    readonly PREUPLOAD = true;
+    
     constructor(protected readonly tokenManager? : TokenManager) {
         /* istanbul ignore if */
         if(!this.tokenManager) {

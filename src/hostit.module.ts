@@ -52,6 +52,21 @@ export interface HostitConfiguration {
             provide: BOOTSTRAP_LISTENER_BEFORE,
             useFactory(app : Application, limit : number | string, type : string[], verifier? : IVerifier[]) {
                 return () => {
+                    if(verifier) {
+                        app.use(async (req : Request, res : Response, next : NextFunction) => {
+                            try {
+                                for(const v of verifier) {
+                                    if(v.PREUPLOAD) {
+                                        await v.verify(req, res, req.body);
+                                    }
+                                }
+                                next();
+                            } catch(e) {
+                                next(e);
+                            }
+                        })
+                    }
+                    
                     app.use(bodyParser.raw({
                         limit,
                         type
@@ -61,7 +76,9 @@ export interface HostitConfiguration {
                         app.use(async (req : Request, res : Response, next : NextFunction) => {
                             try {
                                 for(const v of verifier) {
-                                    await v.verify(req, res, req.body);
+                                    if(!v.PREUPLOAD) {
+                                        await v.verify(req, res, req.body);
+                                    }
                                 }
                                 next();
                             } catch(e) {
